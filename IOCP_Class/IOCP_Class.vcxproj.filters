@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="헤더">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="구현부">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더\ETC">
+      <UniqueIdentifier>{a082e46a-576f-4f46-8a16-a6543b9e63e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더\Socket">
+      <UniqueIdentifier>{a2bb4fe6-e0a1-48c6-b9df-b440d65a6fe5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더\Manager">
+      <UniqueIdentifier>{2bcd832b-efe8-4db7-8a7c-f94592885338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="구현부\ETC">
+      <UniqueIdentifier>{f980fd46-56d2-4266-942f-2eed7fbba9bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="구현부\Manager">
+      <UniqueIdentifier>{814508d7-63e4-4506-804e-5475eb3c80ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="구현부\Socket">
+      <UniqueIdentifier>{14ebf2b6-46b5-4797-a591-508cba335861}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더\State">
+      <UniqueIdentifier>{87e2ea55-7bf1-48f1-8ccd-57e4a0268bea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="구현부\State">
+      <UniqueIdentifier>{695dc3c8-6bce-4b41-bb72-b7fdacdde945}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="구현부\Sector">
+      <UniqueIdentifier>{3fa5ecd6-3620-49e0-b34e-30963d90b157}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더\Sector">
+      <UniqueIdentifier>{a50c68ad-3b4d-48d2-aeeb-473e4e704065}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>구현부\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="Error.cpp">
+      <Filter>구현부\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="IOCPManager.cpp">
+      <Filter>구현부\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerManager.cpp">
+      <Filter>구현부\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientSection.cpp">
+      <Filter>구현부\Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="ListenSocket.cpp">
+      <Filter>구현부\Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="Packing.cpp">
+      <Filter>구현부\Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="TCPSocket.cpp">
+      <Filter>구현부\Socket</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientManager.cpp">
+      <Filter>구현부\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginManager.cpp">
+      <Filter>구현부\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="MySQLDataBaseManager.cpp">
+      <Filter>구현부\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginState.cpp">
+      <Filter>구현부\State</Filter>
+    </ClCompile>
+    <ClCompile Include="InitState.cpp">
+      <Filter>구현부\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Crypt.cpp">
+      <Filter>구현부\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Sector.cpp">
+      <Filter>구현부\Sector</Filter>
+    </ClCompile>
+    <ClCompile Include="SectorManager.cpp">
+      <Filter>구현부\Sector</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatState.cpp">
+      <Filter>구현부\State</Filter>
+    </ClCompile>
+    <ClCompile Include="CProtocol.cpp">
+      <Filter>구현부\ETC</Filter>
+    </ClCompile>
+    <ClCompile Include="ChatManager.cpp">
+      <Filter>구현부\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Lobby.cpp">
+      <Filter>구현부</Filter>
+    </ClCompile>
+    <ClCompile Include="Lobby_Manager.cpp">
+      <Filter>구현부</Filter>
+    </ClCompile>
+    <ClCompile Include="Lobby_State.cpp">
+      <Filter>구현부</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector3D.cpp">
+      <Filter>구현부</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>구현부</Filter>
+    </ClCompile>
+    <ClCompile Include="Player_Manager.cpp">
+      <Filter>구현부</Filter>
+    </ClCompile>
+    <ClCompile Include="Player_State.cpp">
+      <Filter>구현부</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Global.h">
+      <Filter>헤더\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="Error.h">
+      <Filter>헤더\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="TCPSocket.h">
+      <Filter>헤더\Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="ListenSocket.h">
+      <Filter>헤더\Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="CriticalSection.h">
+      <Filter>헤더\Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerManager.h">
+      <Filter>헤더\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="IOCPManager.h">
+      <Filter>헤더\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientSection.h">
+      <Filter>헤더\Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="CtrlHandler.h">
+      <Filter>헤더\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientManager.h">
+      <Filter>헤더\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginManager.h">
+      <Filter>헤더\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="MySQLDataBaseManager.h">
+      <Filter>헤더\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>헤더\State</Filter>
+    </ClInclude>
+    <ClInclude Include="LoginState.h">
+      <Filter>헤더\State</Filter>
+    </ClInclude>
+    <ClInclude Include="InitState.h">
+      <Filter>헤더\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Crypt.h">
+      <Filter>헤더\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Sector.h">
+      <Filter>헤더\Sector</Filter>
+    </ClInclude>
+    <ClInclude Include="SectorManager.h">
+      <Filter>헤더\Sector</Filter>
+    </ClInclude>
+    <ClInclude Include="Packing.h">
+      <Filter>헤더\Socket</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatState.h">
+      <Filter>헤더\State</Filter>
+    </ClInclude>
+    <ClInclude Include="CProtocol.h">
+      <Filter>헤더\ETC</Filter>
+    </ClInclude>
+    <ClInclude Include="ChatManager.h">
+      <Filter>헤더\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Lobby.h">
+      <Filter>헤더</Filter>
+    </ClInclude>
+    <ClInclude Include="Lobby_Manager.h">
+      <Filter>헤더</Filter>
+    </ClInclude>
+    <ClInclude Include="Lobby_State.h">
+      <Filter>헤더</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3D.h">
+      <Filter>헤더</Filter>
+    </ClInclude>
+    <ClInclude Include="Quaternion.h">
+      <Filter>헤더</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>헤더</Filter>
+    </ClInclude>
+    <ClInclude Include="Player_Manager.h">
+      <Filter>헤더</Filter>
+    </ClInclude>
+    <ClInclude Include="Player_State.h">
+      <Filter>헤더</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
