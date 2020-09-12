@@ -38,6 +38,47 @@ void LoginManager::Begin()
 	}
 }
 
+
+bool LoginManager::OverLap(CClientSection* ptr)
+{
+	CLock lock;
+	char id[128];
+	ZeroMemory(id, sizeof(id));
+
+	UnPacking(ptr->UnPackData(), id);
+	int result = NODATA;
+	int size = 0;
+	char buf[BUFSIZE];
+	ZeroMemory(buf, sizeof(buf));
+
+	for (int i = 0; i < mUser_List->size(); i++)
+	{
+		if (!strcmp(mUser_List->at(i)->id, id))
+		{
+			result = ERROR_JOIN_EXISTS;
+			size = Packing(buf, result, "이미 있는 ID 입니다.");
+			break;
+		}
+	}
+
+	if (result == NODATA)
+	{
+		size = Packing(buf, result, "사용 할 수 있는 ID 입니다.");
+	}
+
+	//이부분 수정
+	unsigned __int64 full_code = NULL;
+	protocol->ProtocolMaker(full_code, (unsigned __int64)CLASS_STATE::LOGIN_STATE);
+	protocol->ProtocolMaker(full_code, ptr->GetState()->Get_Sub_State());
+	protocol->ProtocolMaker(full_code, (unsigned __int64)PROTOCOL::JOIN_OVERLAPRESULT);
+
+	ptr->PackingData(full_code, buf, size);
+
+	if (!ptr->Send()) return false;
+
+	return true;
+}
+
 void LoginManager::End()
 {
 	mUser_List->clear();
@@ -222,6 +263,18 @@ int LoginManager::Packing(char* buf, int result, int num, const char* str)
 	size = size + len;
 
 	return size;
+}
+
+void LoginManager::UnPacking(const char* buf, char* id)
+{
+	int id_len, pw_len;
+	const char* ptr = buf;
+
+	memcpy(&id_len, ptr, sizeof(id_len));
+	ptr = ptr + sizeof(id_len);
+
+	memcpy(id, ptr, id_len);
+	ptr = ptr + id_len;
 }
 
 void LoginManager::UnPacking(const char* buf, char* id, char* pw)

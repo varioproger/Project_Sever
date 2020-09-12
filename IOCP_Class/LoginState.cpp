@@ -33,6 +33,15 @@ void CLoginState::RecvProcess(CClientSection* ptr)
 		if (code_check == TRUE)
 		{
 			//이 부분 수정 클라이언트의 protocol 확인
+			code_check = CProtocol::GetInstance()->ProtocolUnpacker(full_code, NULL, NULL, (unsigned __int64)LoginManager::PROTOCOL::JOIN_OVERLAP);
+			if (code_check == TRUE)
+			{
+				printf("OverLap Check\n");
+				LoginManager::GetInstance()->OverLap(ptr);
+				mState = STATE::SEND_RESULT_STATE;
+				return;
+			}
+
 			code_check = CProtocol::GetInstance()->ProtocolUnpacker(full_code, NULL,NULL,(unsigned __int64)LoginManager::PROTOCOL::JOIN_INFO);
 			if (code_check ==TRUE)
 			{
