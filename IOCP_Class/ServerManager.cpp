@@ -66,6 +66,20 @@ bool CServerManager::Begin()
 	ChatManager::GetInstance()->Begin();
 	Lobby_Manager::GetInstance()->Begin();
 	Player_Manager::GetInstance()->Begin();
+
+	/*
+	state input
+	INIT_STATE =  0x0100000000000000,
+	LOGIN_STATE = 0x0200000000000000,
+	CHAT_STATE =  0x0300000000000000,
+	LOBBY_STATE = 0x0400000000000000,
+	PLAYER_STATE = 0x0500000000000000,
+	*/
+	this->class_state.push_back((unsigned __int64)CLASS_STATE::INIT_STATE);
+	this->class_state.push_back((unsigned __int64)CLASS_STATE::CHAT_STATE);
+	this->class_state.push_back((unsigned __int64)CLASS_STATE::LOBBY_STATE);
+	this->class_state.push_back((unsigned __int64)CLASS_STATE::LOGIN_STATE);
+	this->class_state.push_back((unsigned __int64)CLASS_STATE::PLAYER_STATE);
 	return true;
 }
 
@@ -125,31 +139,35 @@ bool CServerManager::Recv(void* ptr, int len)
 	}
 	//class state 마다 setstate를 해줘야 함. 그럴려면 여기서 Clock 있어야 하는데...
 	unsigned __int64 full_code = client->GetProtocol();
-	cout <<"full_code : " <<hex << full_code << endl;
-	if (CProtocol::GetInstance()->ProtocolUnpacker(full_code, (unsigned __int64)CLASS_STATE::INIT_STATE,NULL,NULL))
+
+	for (int i = 0; i < class_state.size(); i++)
 	{
-		//초기화를 init_state로 했기 때문에 여기선 따로 설정하지 않는다. 시작과 동시에 CHAT_STATE 로 가게끔 설정해둠.
-		printf("INIT_STATE\n");
-	}
-	else if (CProtocol::GetInstance()->ProtocolUnpacker(full_code, (unsigned __int64)CLASS_STATE::LOGIN_STATE, NULL, NULL))
-	{
-		printf("LOGIN_STATE\n");
-		client->SetState(client->GetLoginState());
-	}
-	else if (CProtocol::GetInstance()->ProtocolUnpacker(full_code, (unsigned __int64)CLASS_STATE::LOBBY_STATE, NULL, NULL))
-	{
-		printf("LOBBY_STATE\n");
-		client->SetState(client->GetLobbyState());
-	}
-	else if (CProtocol::GetInstance()->ProtocolUnpacker(full_code, (unsigned __int64)CLASS_STATE::CHAT_STATE, NULL, NULL))
-	{
-		printf("CHAT_STATE\n");
-		client->SetState(client->GetChatState());
-	}
-	else if (CProtocol::GetInstance()->ProtocolUnpacker(full_code, (unsigned __int64)CLASS_STATE::PLAYER_STATE, NULL, NULL))
-	{
-		printf("PLAYER_STATE\n");
-		client->SetState(client->GetPlayerState());
+		if (CProtocol::GetInstance()->ProtocolUnpacker(full_code, (unsigned __int64)class_state[i], NULL, NULL))
+		{
+			switch ((CLASS_STATE)class_state[i])
+			{
+			case CLASS_STATE::INIT_STATE:
+				printf("INIT_STATE\n");
+				break;
+			case CLASS_STATE::LOGIN_STATE:
+				printf("LOGIN_STATE\n");
+				client->SetState(client->GetLoginState());
+				break;
+			case CLASS_STATE::CHAT_STATE:
+				printf("CHAT_STATE\n");
+				client->SetState(client->GetChatState());
+				break;
+			case CLASS_STATE::LOBBY_STATE:
+				printf("LOBBY_STATE\n");
+				client->SetState(client->GetLobbyState());
+				break;
+			case CLASS_STATE::PLAYER_STATE:
+				printf("PLAYER_STATE\n");
+				client->SetState(client->GetPlayerState());
+				break;
+			}
+			//초기화를 init_state로 했기 때문에 여기선 따로 설정하지 않는다. 시작과 동시에 CHAT_STATE 로 가게끔 설정해둠.		
+		}
 	}
 	printf("OUT\n");
 	client->GetState()->RecvProcess(client);

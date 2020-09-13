@@ -13,7 +13,7 @@ class CServerManager : public CIOCPManager
 {
 private:
 	static CServerManager* pthis;
-
+	vector<unsigned __int64> class_state;
 	CServerManager();
 	~CServerManager();
 
