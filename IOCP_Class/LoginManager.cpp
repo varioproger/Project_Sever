@@ -146,7 +146,6 @@ bool LoginManager::Join(CClientSection* ptr)
 bool LoginManager::Login(CClientSection* ptr)
 {
 	CLock lock;
-
 	UserInfo temp;
 	ZeroMemory(&temp, sizeof(UserInfo));
 	UnPacking(ptr->UnPackData(), temp.id, temp.pw);

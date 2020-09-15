@@ -16,7 +16,7 @@ public:
     void Set_Rotation(Quaternion _rot);
     int  Get_Serial_num();
     void Set_Serial_num(int _num);
-
+    Vector3D Character_Forward(float rotVertical, Vector3D m_CamForward, float rotHorizontal, Vector3D Cam_right);
 public:
     bool* input;
     float moveSpeed;
@@ -26,7 +26,7 @@ private:
 	Vector3D position;
 	Quaternion rotation;
     void Move(Vector3D _inputDirection);
-    Vector3D Character_Forward(float rotVertical, Vector3D m_CamForward , float rotHorizontal, Vector3D Cam_right);
+
 
 };
 

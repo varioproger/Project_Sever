@@ -124,6 +124,33 @@ int Player_Manager::Packing(char* buf, int serial,  Quaternion* rotation)
 
     return size;
 }
+int Player_Manager::UnPacking(const char* buf, float& rotVertical, Vector3D& m_CamForward, float& rotHorizontal, Vector3D& Cam_right)
+{
+    const char* ptr = buf;
+
+    memcpy(&rotVertical, ptr, sizeof(float));
+    ptr += sizeof(float);
+    //
+    memcpy(&m_CamForward.x, ptr, sizeof(float));
+    ptr += sizeof(float);
+    memcpy(&m_CamForward.y, ptr, sizeof(float));
+    ptr += sizeof(float);
+    memcpy(&m_CamForward.z, ptr, sizeof(float));
+    ptr += sizeof(float);
+    //
+    memcpy(&rotHorizontal, ptr, sizeof(float));
+    ptr += sizeof(float);
+    //
+    memcpy(&Cam_right.x, ptr, sizeof(float));
+    ptr += sizeof(float);
+    memcpy(&Cam_right.y, ptr, sizeof(float));
+    ptr += sizeof(float);
+    memcpy(&Cam_right.z, ptr, sizeof(float));
+    ptr += sizeof(float);
+
+
+    return 0;
+}
 void Player_Manager::UnPacking(const char* buf, Player* player)
 {
     int bool_size = 0;
@@ -285,6 +312,44 @@ void Player_Manager::Remove_From_Game(CClientSection* ptr)
             {
                 ptr->player_offline(ptr->Getplayer());
                 player_list->erase(player_list->begin() + i);
+            }
+        }
+    }
+}
+
+void Player_Manager::Character_Forward(CClientSection* ptr)
+{
+    float rotVertical;
+    Vector3D m_CamForward;
+    float rotHorizontal;
+    Vector3D Cam_right;
+
+    unsigned __int64 full_code = NULL;
+    char buf[BUFSIZE];
+    ZeroMemory(buf, sizeof(buf));
+
+    ZeroMemory(&m_CamForward, sizeof(m_CamForward));
+    ZeroMemory(&Cam_right, sizeof(Cam_right));
+
+    UnPacking(ptr->UnPackData(), rotVertical,m_CamForward,rotHorizontal,Cam_right);
+
+    protocol->ProtocolMaker(full_code, (unsigned __int64)CLASS_STATE::PLAYER_STATE);
+    protocol->ProtocolMaker(full_code, ptr->GetState()->Get_Sub_State());
+    protocol->ProtocolMaker(full_code, (unsigned __int64)PROTOCOL::CHARACTERFORWARD);
+
+
+    Vector3D Rotatedirection = ptr->Getplayer()->Character_Forward(rotVertical, m_CamForward, rotHorizontal, Cam_right);
+    int size = Packing(buf, ptr->GetUser()->number, &Rotatedirection);//다른 사람들의 정보를 패킹
+    for (int i = 0; i < player_list->size(); i++)
+    {
+        if (player_list->at(i) != nullptr)
+        {
+            ZeroMemory(buf, sizeof(buf));
+            player_list->at(i)->PackingData(full_code, buf, size);
+            if (!player_list->at(i)->Send())//전체에게 보낸다.
+            {
+                printf("Player_Movement_Send_Error_1\n");
+                return;
             }
         }
     }
