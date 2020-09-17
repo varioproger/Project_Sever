@@ -1,17 +1,7 @@
 #include "Error.h"
 
-CError* CError::pthis = nullptr;
+IMPLEMENT_SINGLETON(CError)
 
-CError* CError::GetInstance()
-{
-	if (!pthis) pthis = new CError();
-	return pthis;
-}
-
-void CError::Destory()
-{
-	if (pthis) delete pthis;
-}
 
 void CError::err_quit(const char* msg)
 {

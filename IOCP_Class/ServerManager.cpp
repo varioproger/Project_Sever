@@ -7,12 +7,16 @@ CServerManager* CServerManager::pthis = nullptr;
 
 CServerManager* CServerManager::GetInstance()
 {
+	/*Create 순서
+	ERROR -> PROTOCOL -> ClientManager-> DB -> Login -> Lobby -> CHAT n PLAYER -> ServerManager
+	*/
+	CError::Create();
+	CProtocol::Create();
 	ClientManager::Create();
 	CMySQLDBManager::Create();
 	LoginManager::Create();
-	CProtocol::Create();
-	ChatManager::Create();
 	Lobby_Manager::Create();
+	ChatManager::Create();
 	Player_Manager::Create();
 	if (!pthis) pthis = new CServerManager();
 	return pthis;
@@ -20,16 +24,18 @@ CServerManager* CServerManager::GetInstance()
 
 void CServerManager::Destory()
 {
-	if (pthis) delete pthis;
-
-	CMySQLDBManager::Destroy();
-	CError::Destory();
-	ClientManager::Destroy();
-	LoginManager::Destroy();
+	/*Destroy 순서
+	CHAT n PLAYER-> Lobby-> Login-> ClientManager-> DB -> PROTOCOL-> ERROR-> ServerManager
+	*/
+	Player_Manager::Destroy();
 	ChatManager::Destroy();
 	Lobby_Manager::Destroy();
+	LoginManager::Destroy();
+	ClientManager::Destroy();
+	CMySQLDBManager::Destroy();
 	CProtocol::Destroy();
-	Player_Manager::Destroy();
+	CError::Destroy();
+	if (pthis) delete pthis;
 }
 
 CServerManager::CServerManager()
@@ -45,8 +51,7 @@ CServerManager::~CServerManager()
 
 bool CServerManager::Begin()
 {
-	// MySQL DB Setting
-	CMySQLDBManager::GetInstance()->Begin();
+	
 
 	// WSA Setting
 	WSADATA wsa;
@@ -60,11 +65,12 @@ bool CServerManager::Begin()
 	mListenSock->TCP_Setting(nullptr, PORT);
 	mListenSock->Listen();
 
-	// Manager Setting
+	// Manager Setting/
+	CMySQLDBManager::GetInstance()->Begin();
 	ClientManager::GetInstance()->Begin();
 	LoginManager::GetInstance()->Begin();
-	ChatManager::GetInstance()->Begin();
 	Lobby_Manager::GetInstance()->Begin();
+	ChatManager::GetInstance()->Begin();
 	Player_Manager::GetInstance()->Begin();
 
 	/*
@@ -108,12 +114,15 @@ void CServerManager::Run()
 
 void CServerManager::End()
 {
-	CMySQLDBManager::GetInstance()->End();
-	ClientManager::GetInstance()->End();
-	LoginManager::GetInstance()->End();
+	/*Destroy 순서
+	CHAT n PLAYER-> Lobby-> Login-> ClientManager-> DB -> PROTOCOL-> ERROR-> ServerManager
+	*/
+	Player_Manager::GetInstance()->End();
 	ChatManager::GetInstance()->End();
 	Lobby_Manager::GetInstance()->End();
-	Player_Manager::GetInstance()->End();
+	LoginManager::GetInstance()->End();
+	ClientManager::GetInstance()->End();
+	CMySQLDBManager::GetInstance()->End();
 	WSACleanup();
 	Destory();
 }
@@ -228,8 +237,9 @@ void CServerManager::Disconneted(void* ptr)
 	printf("Disconneted\n");
 
 	// Remove
-	Lobby_Manager::GetInstance()->Remove((CClientSection*)ptr);
-	ChatManager::GetInstance()->Remove((CClientSection*)ptr);
-	ClientManager::GetInstance()->RemoveClient((CClientSection*)ptr);
 	Player_Manager::GetInstance()->Remove_From_Game((CClientSection*)ptr);
+	ChatManager::GetInstance()->Remove((CClientSection*)ptr);
+	Lobby_Manager::GetInstance()->Remove((CClientSection*)ptr);
+	ClientManager::GetInstance()->RemoveClient((CClientSection*)ptr);
+	
 }

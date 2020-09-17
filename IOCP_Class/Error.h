@@ -4,13 +4,10 @@
 class CError 
 {
 private:
-	static CError* pthis;
-
-	CError() {}
-	~CError() {}
+	DECLARE_SINGLETONE(CError)
+	CError() = default;
+	~CError() = default;
 public:
-	static CError* GetInstance();
-	static void Destory();
 
 	void err_quit(const char* msg);
 	void err_display(const char* msg);

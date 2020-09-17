@@ -8,7 +8,6 @@
 #include "ChatManager.h"
 #include "Lobby_Manager.h"
 #include "Player_Manager.h"
-
 class CServerManager : public CIOCPManager
 {
 private:

@@ -7,13 +7,11 @@ Player_Manager::Player_Manager()
     player_list = nullptr;
     protocol = nullptr;
 }
-
 void Player_Manager::Begin()
 {
     player_list = new vector< CClientSection*>();
     protocol = CProtocol::GetInstance();
 }
-
 void Player_Manager::End()
 {
     player_list->clear();
@@ -22,7 +20,6 @@ void Player_Manager::End()
         delete player_list;
     }
 }
-
 int Player_Manager::Packing(char* buf, int number ,Player* player)
 {
     char* ptr = buf;
@@ -316,7 +313,6 @@ void Player_Manager::Remove_From_Game(CClientSection* ptr)
         }
     }
 }
-
 void Player_Manager::Character_Forward(CClientSection* ptr)
 {
     float rotVertical;
