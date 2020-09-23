@@ -1,5 +1,5 @@
 #include "LoginManager.h"
-
+#include "ChatManager.h"
 IMPLEMENT_SINGLETON(LoginManager)
 
 LoginManager::LoginManager()
@@ -176,6 +176,8 @@ bool LoginManager::Login(CClientSection* ptr)
 
 					printf("Login Success\n");
 					size = Packing(buf, login_result, ptr->GetUser()->number, msg);
+
+					ChatManager::GetInstance()->Add(ptr);
 				}
 				else
 				{
@@ -208,8 +210,10 @@ bool LoginManager::Login(CClientSection* ptr)
 
 	ptr->PackingData(full_code, buf, size);
 
-	if (!ptr->Send()) return false;
-
+	if (!ptr->Send())
+	{
+		return false;
+	}
 	return true;
 }
 

@@ -8,22 +8,19 @@ Lobby::Lobby()
 
 bool Lobby::Add(CClientSection* ptr)
 {
-    if (user_list->size() < 3)
+    user_list->push_back(ptr);
+    if (user_list->size() % 2 == 0)
     {
-        user_list->push_back(ptr);
-        printf("Add_Success\n");
-        if (user_list->size() == 2)
-        {
-            full = true;
-        }
-        return true;
+        printf("2일때\n");
+        full = true;
+        return false;
     }
     else
     {
-        printf("Add_Fail\n");
+        printf("1일때\n");
         full = false;
-        return false;
-    }
+        return true;
+    }  
 }
 
 bool Lobby::Remove(CClientSection* ptr)

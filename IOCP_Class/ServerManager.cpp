@@ -221,9 +221,7 @@ void CServerManager::Accept(void* ptr)
 	SOCKET sock = (SOCKET)overlapped->ptr;
 	// Add
 	CClientSection* client = ClientManager::GetInstance()->AddClient(sock);
-	
-	//추후 수정 필요 -> mysql 확인을 못하는 관계로 login 없이 진행하기 위함 
-	ChatManager::GetInstance()->Add(client);
+
 	delete overlapped;
 
 	if (!client->Recv())

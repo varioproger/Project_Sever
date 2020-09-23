@@ -19,6 +19,7 @@ private:
 		NOT_READY,
 		READY
 	};
+	int Packing(char* buf, int lobby_num, int result, const char* str);
 	int Packing(char* buf, int result, const char* str);
 private:
 	DECLARE_SINGLETONE(Lobby_Manager)

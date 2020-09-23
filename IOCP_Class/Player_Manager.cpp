@@ -23,15 +23,10 @@ void Player_Manager::End()
 int Player_Manager::Packing(char* buf, int number ,Player* player)
 {
     char* ptr = buf;
-    unsigned long serial = player->Get_Serial_num();//시리얼 넘버
     int size = 0;
 
     //id
     memcpy(ptr, &number, sizeof(int));
-    ptr += sizeof(int);
-    size += sizeof(int);
-    //serial
-    memcpy(ptr, &serial, sizeof(int));
     ptr += sizeof(int);
     size += sizeof(int);
 

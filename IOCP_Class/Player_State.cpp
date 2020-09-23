@@ -14,7 +14,7 @@ void Player_State::RecvProcess(CClientSection* ptr)
 {
 	flag = true;
 	unsigned __int64 full_code = ptr->GetProtocol();
-	cout << "Lobby_State" << hex << full_code << endl;
+	cout << "Player_State" << hex << full_code << endl;
 	//이 부분 수정 클라이언트의 main state 확인
 	bool code_check = CProtocol::GetInstance()->ProtocolUnpacker(full_code, (unsigned __int64)CLASS_STATE::PLAYER_STATE, NULL, NULL);
 	if (code_check == TRUE)

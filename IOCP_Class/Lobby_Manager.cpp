@@ -8,11 +8,37 @@ Lobby_Manager::Lobby_Manager()
 	protocol = nullptr;
 }
 
+int Lobby_Manager::Packing(char* buf,int lobby_num ,int result, const char* str)
+{
+	char* ptr = buf;
+	int len = strlen(str);
+	int size = 0;
+
+	memcpy(ptr, &result, sizeof(result));
+	ptr = ptr + sizeof(result);
+	size = size + sizeof(result);
+
+	memcpy(ptr, &lobby_num, sizeof(lobby_num));
+	ptr = ptr + sizeof(lobby_num);
+	size = size + sizeof(lobby_num);
+
+	memcpy(ptr, &len, sizeof(len));
+	ptr = ptr + sizeof(len);
+	size = size + sizeof(len);
+
+	memcpy(ptr, str, len);
+	ptr = ptr + len;
+	size = size + len;
+
+	return size;
+}
+
 int Lobby_Manager::Packing(char* buf, int result, const char* str)
 {
 	char* ptr = buf;
 	int len = strlen(str);
 	int size = 0;
+
 
 	memcpy(ptr, &result, sizeof(result));
 	ptr = ptr + sizeof(result);
@@ -28,7 +54,6 @@ int Lobby_Manager::Packing(char* buf, int result, const char* str)
 
 	return size;
 }
-
 void Lobby_Manager::Begin()
 {
 	lobby_list = new vector<Lobby*>();
@@ -56,15 +81,16 @@ bool Lobby_Manager::Add(CClientSection* ptr)
 	ZeroMemory(buf, sizeof(buf));
 	for (int i = 0; i < lobby_list->size(); i++)
 	{
-		if (lobby_list->at(i)->Add(ptr))//방인원수가 꽉 차지 않았을 경우
+		
+		if (!lobby_list->at(i)->Check_Full())//방인원수가 꽉 차지 않았을 경우
 		{			
 			protocol->ProtocolMaker(full_code, (unsigned __int64)CLASS_STATE::LOBBY_STATE);
 			protocol->ProtocolMaker(full_code, ptr->GetState()->Get_Sub_State());
 
-			if (!lobby_list->at(i)->Check_Full())//인원이 꽉차지 않았을 경우
+			if (lobby_list->at(i)->Add(ptr))//인원이 꽉차지 않았을 경우
 			{
 				printf("NOT FULL\n");
-				size = Packing(buf, (int)RESULT::NOT_READY, GAME_NOT_READY);
+				size = Packing(buf, lobby_list->size(), (int)RESULT::NOT_READY, GAME_NOT_READY);
 				//이부분 수정		
 				
 			}
@@ -72,7 +98,6 @@ bool Lobby_Manager::Add(CClientSection* ptr)
 			{
 				printf("FULL\n");
 				size = Packing(buf, (int)RESULT::READY, GAME_READY);	
-				printf("lobby_list->at(i)->Get_User_List()->size() = %d\n", lobby_list->at(i)->Get_User_List()->size());
 				for (int j = 0; j < lobby_list->at(i)->Get_User_List()->size(); j++)
 				{
 					lobby_list->at(i)->Get_User_List()->at(j)->PackingData(full_code, buf, size);
@@ -81,20 +106,13 @@ bool Lobby_Manager::Add(CClientSection* ptr)
 						return false;
 					}
 				}
+
+				printf("새로 생성\n");
+				Lobby* tmp = new Lobby();
+				lobby_list->push_back(tmp);
+
 				return true;
 			}
-		}
-		else//다 찼을 경우 방을 새로 생성해서 넣어준다.
-		{
-			Lobby* tmp = new Lobby();
-			tmp->Add(ptr);
-			lobby_list->push_back(tmp);
-			protocol->ProtocolMaker(full_code, (unsigned __int64)CLASS_STATE::LOBBY_STATE);
-			protocol->ProtocolMaker(full_code, ptr->GetState()->Get_Sub_State());
-
-			printf("NOT FULL\n");
-			size = Packing(buf, (int)RESULT::NOT_READY, GAME_NOT_READY);
-			flag = true;
 		}
 	}
 	ptr->PackingData(full_code, buf, size);
