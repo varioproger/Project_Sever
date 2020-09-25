@@ -45,7 +45,7 @@ void CLoginState::RecvProcess(CClientSection* ptr)
 			code_check = CProtocol::GetInstance()->ProtocolUnpacker(full_code, NULL,NULL,(unsigned __int64)LoginManager::PROTOCOL::JOIN_INFO);
 			if (code_check ==TRUE)
 			{
-				printf("JOIN_INFO123\n");
+				printf("JOIN_INFO\n");
 				LoginManager::GetInstance()->Join(ptr);
 				mState = STATE::SEND_RESULT_STATE;
 				return;
@@ -53,7 +53,7 @@ void CLoginState::RecvProcess(CClientSection* ptr)
 			code_check = CProtocol::GetInstance()->ProtocolUnpacker(full_code, NULL, NULL, (unsigned __int64)LoginManager::PROTOCOL::LOGIN_INFO);
 			if (code_check == TRUE)
 			{
-				printf("LOGIN_INFO123\n");
+				printf("LOGIN_INFO\n");
 				LoginManager::GetInstance()->Login(ptr);
 				mState = STATE::SEND_RESULT_STATE;
 				return;

@@ -34,7 +34,7 @@ void Player_State::RecvProcess(CClientSection* ptr)
 		{
 			printf("MOVEMENT\n");
 			mState = STATE::MOVEMENT;
-			if (!Player_Manager::GetInstance()->Player_Movement(ptr))
+			if (!Player_Manager::GetInstance()->Player_Movement(ptr, full_code))
 			{
 				flag = false;
 			}

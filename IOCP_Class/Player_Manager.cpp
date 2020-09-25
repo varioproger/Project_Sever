@@ -116,6 +116,28 @@ int Player_Manager::Packing(char* buf, int serial,  Quaternion* rotation)
 
     return size;
 }
+
+int Player_Manager::Packing(char* buf, int serial, float vertical, float horizontal)
+{
+    char* ptr = buf;
+    int size = 0;
+
+    //serial
+    memcpy(ptr, &serial, sizeof(int));
+    ptr += sizeof(int);
+    size += sizeof(int);
+
+    memcpy(ptr, &vertical, sizeof(float));
+    ptr += sizeof(float);
+    size += sizeof(float);
+
+
+    memcpy(ptr, &horizontal, sizeof(float));
+    ptr += sizeof(float);
+    size += sizeof(float);
+
+    return size;
+}
 int Player_Manager::UnPacking(const char* buf, float& rotVertical, Vector3D& m_CamForward, float& rotHorizontal, Vector3D& Cam_right)
 {
     const char* ptr = buf;
@@ -167,14 +189,19 @@ void Player_Manager::UnPacking(const char* buf, Player* player)
     ptr += sizeof(float);
     memcpy(&rot.z, ptr, sizeof(float));
 
-    printf("W = %f\n", rot.w);
-    printf("X = %f\n", rot.x);
-    printf("Y = %f\n", rot.y);
-    printf("Z = %f\n", rot.z);
     player->Set_Rotation(rot);
-
-
 }
+
+void Player_Manager::UnPacking(const char* buf, float& x, float& y)
+{
+    const char* ptr = buf;
+   
+    memcpy(&x, ptr, sizeof(float));
+    ptr += sizeof(float);
+    memcpy(&y, ptr, sizeof(float));
+}
+
+
 void Player_Manager::Send_Into_Game(CClientSection* ptr)
 {
     CLock lock;
@@ -230,67 +257,111 @@ void Player_Manager::Send_Into_Game(CClientSection* ptr)
         }
     }
 }
-bool Player_Manager::Player_Movement(CClientSection* ptr)
+bool Player_Manager::Player_Movement(CClientSection* ptr, unsigned __int64 _protocol)
 {
-    CLock lock;
     printf("Player_Movement\n");
+    CLock lock;
     int size = 0;
     unsigned __int64 full_code = NULL;
     char buf[BUFSIZE];
     ZeroMemory(buf, sizeof(buf));
 
-    UnPacking(ptr->UnPackData(), ptr->Getplayer());
-    for (int i = 0; i < 4; i++)
+    if (CProtocol::GetInstance()->ProtocolUnpacker(_protocol, NULL, NULL,(unsigned __int64)PROTOCOL::INITROTATION))
     {
-        printf("player->input[%d] = %d\n", i, ptr->Getplayer()->input[i]);
+        printf("INITROTATION\n");
+        UnPacking(ptr->UnPackData(), ptr->Getplayer()->verticalRotation, ptr->Getplayer()->horizontalRotation);
     }
-    printf("W = %f\n", ptr->Getplayer()->Get_Rotation()->w);
-    printf("X = %f\n", ptr->Getplayer()->Get_Rotation()->x);
-    printf("Y = %f\n", ptr->Getplayer()->Get_Rotation()->y);
-    printf("Z = %f\n", ptr->Getplayer()->Get_Rotation()->z);
-    ptr->Getplayer()->Update_Character_Vector3D(ptr->Getplayer()->input);
-
-    protocol->ProtocolMaker(full_code, (unsigned __int64)CLASS_STATE::PLAYER_STATE);
-    protocol->ProtocolMaker(full_code, ptr->GetState()->Get_Sub_State());
-    protocol->ProtocolMaker(full_code, (unsigned __int64)PROTOCOL::POSITION);
-
-    for (int i = 0; i < player_list->size(); i++)
+    if (CProtocol::GetInstance()->ProtocolUnpacker(_protocol, NULL, NULL, (unsigned __int64)PROTOCOL::ROTATION))
     {
-        if (player_list->at(i) != nullptr)
-        {
-            ZeroMemory(buf, sizeof(buf));
+        float mouse_x = 0.0f;
+        float mouse_y = 0.0f;
 
-            size = Packing(buf, ptr->GetUser()->number, ptr->Getplayer()->Get_Position());//내 정보를 패킹
-            player_list->at(i)->PackingData(full_code, buf, size);
-            if (!player_list->at(i)->Send())//전체에게 보낸다.
-            {
-                printf("Player_Movement_Send_Error_1\n");
-                return false;
-            }
-        }
+        printf("ROTATION\n");
+        UnPacking(ptr->UnPackData(), mouse_y, mouse_x);
+        ptr->Getplayer()->Character_Rotation(-mouse_y, mouse_x);
+
+		protocol->ProtocolMaker(full_code, (unsigned __int64)CLASS_STATE::PLAYER_STATE);
+		protocol->ProtocolMaker(full_code, ptr->GetState()->Get_Sub_State());
+		protocol->ProtocolMaker(full_code, (unsigned __int64)PROTOCOL::ROTATION);
+
+		for (int i = 0; i < player_list->size(); i++)
+		{
+			if (player_list->at(i) != nullptr)
+			{
+				ZeroMemory(buf, sizeof(buf));
+
+				size = Packing(buf, ptr->GetUser()->number, ptr->Getplayer()->verticalRotation, ptr->Getplayer()->horizontalRotation);//내 정보를 패킹
+				player_list->at(i)->PackingData(full_code, buf, size);
+				if (!player_list->at(i)->Send())//전체에게 보낸다.
+				{
+					printf("Player_Rotation_Send_Error\n");
+					return false;
+				}
+			}
+		}
+
     }
-    full_code = NULL;
-    protocol->ProtocolMaker(full_code, (unsigned __int64)CLASS_STATE::PLAYER_STATE);
-    protocol->ProtocolMaker(full_code, ptr->GetState()->Get_Sub_State());
-    protocol->ProtocolMaker(full_code, (unsigned __int64)PROTOCOL::ROTATION);
-    cout << "ROTATION" << hex << full_code << endl;
-    for (int i = 0; i < player_list->size(); i++)
+    if (CProtocol::GetInstance()->ProtocolUnpacker(_protocol, NULL, NULL, (unsigned __int64)PROTOCOL::POSITION))
     {
-        if (player_list->at(i) != nullptr)
-        {
-            if (player_list->at(i)->Getplayer()->Get_Serial_num() != ptr->Getplayer()->Get_Serial_num())//나를 제외한
-            {
-                ZeroMemory(buf, sizeof(buf));
-                size = Packing(buf, ptr->GetUser()->number, ptr->Getplayer()->Get_Rotation());//다른 사람들의 정보를 패킹
-                player_list->at(i)->PackingData(full_code, buf, size);
-                if (!player_list->at(i)->Send())//전체에게 보낸다.
-                {
-                    printf("Player_Movement_Send_Error_2\n");
-                    return false;
-                }
-            }
-        }
+        printf("POSITION\n");
+
+		UnPacking(ptr->UnPackData(), ptr->Getplayer());
+		for (int i = 0; i < 4; i++)
+		{
+			printf("player->input[%d] = %d\n", i, ptr->Getplayer()->input[i]);
+		}
+		printf("W = %f\n", ptr->Getplayer()->Get_Rotation()->w);
+		printf("X = %f\n", ptr->Getplayer()->Get_Rotation()->x);
+		printf("Y = %f\n", ptr->Getplayer()->Get_Rotation()->y);
+		printf("Z = %f\n", ptr->Getplayer()->Get_Rotation()->z);
+		ptr->Getplayer()->Update_Character_Vector3D(ptr->Getplayer()->input);
+
+		protocol->ProtocolMaker(full_code, (unsigned __int64)CLASS_STATE::PLAYER_STATE);
+		protocol->ProtocolMaker(full_code, ptr->GetState()->Get_Sub_State());
+		protocol->ProtocolMaker(full_code, (unsigned __int64)PROTOCOL::POSITION);
+
+		for (int i = 0; i < player_list->size(); i++)
+		{
+			if (player_list->at(i) != nullptr)
+			{
+				ZeroMemory(buf, sizeof(buf));
+
+				size = Packing(buf, ptr->GetUser()->number, ptr->Getplayer()->Get_Position());//내 정보를 패킹
+				player_list->at(i)->PackingData(full_code, buf, size);
+				if (!player_list->at(i)->Send())//전체에게 보낸다.
+				{
+					printf("Player_Movement_Send_Error_1\n");
+					return false;
+				}
+			}
+		}
+		//full_code = NULL;
+		//protocol->ProtocolMaker(full_code, (unsigned __int64)CLASS_STATE::PLAYER_STATE);
+		//protocol->ProtocolMaker(full_code, ptr->GetState()->Get_Sub_State());
+		//protocol->ProtocolMaker(full_code, (unsigned __int64)PROTOCOL::ROTATION);
+		//cout << "ROTATION" << hex << full_code << endl;
+		//for (int i = 0; i < player_list->size(); i++)
+		//{
+		//	if (player_list->at(i) != nullptr)
+		//	{
+		//		if (player_list->at(i)->Getplayer()->Get_Serial_num() != ptr->Getplayer()->Get_Serial_num())//나를 제외한
+		//		{
+		//			ZeroMemory(buf, sizeof(buf));
+		//			size = Packing(buf, ptr->GetUser()->number, ptr->Getplayer()->Get_Rotation());//다른 사람들의 정보를 패킹
+		//			player_list->at(i)->PackingData(full_code, buf, size);
+		//			if (!player_list->at(i)->Send())//전체에게 보낸다.
+		//			{
+		//				printf("Player_Movement_Send_Error_2\n");
+		//				return false;
+		//			}
+		//		}
+		//	}
+		//}
     }
+  
+
+
+   
 
 }
 void Player_Manager::Remove_From_Game(CClientSection* ptr)
@@ -344,4 +415,9 @@ void Player_Manager::Character_Forward(CClientSection* ptr)
             }
         }
     }
+}
+
+void Player_Manager::Character_Rotation(CClientSection* ptr)
+{
+
 }

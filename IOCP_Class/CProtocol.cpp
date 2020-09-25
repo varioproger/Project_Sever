@@ -32,12 +32,10 @@ bool CProtocol::ProtocolUnpacker(unsigned __int64 _full_code, unsigned __int64 m
     }
     if (temp == main|| temp == sub || temp == protocol)
     {
-        printf("일치\n");
         return true;
     }
     else
     {
-        printf("불일치\n");
         return false;
     }
 

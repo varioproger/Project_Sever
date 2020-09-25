@@ -24,6 +24,22 @@ void Player::Move(Vector3D _inputDirection)
     position += _moveDirection * moveSpeed;
 }
 
+float Player::Mathf_Clamp(float input, float min, float max)
+{
+    if (input > min || input < max)
+    {
+        return input;
+    }
+    else if (input < min)
+    {
+        return min;
+    }
+    else
+    {
+        return max;
+    }
+}
+
 Vector3D Player::Character_Forward(float rotVertical, Vector3D m_CamForward, float rotHorizontal, Vector3D Cam_right)
 {
     return ((m_CamForward * rotVertical) + ( Cam_right * rotHorizontal));
