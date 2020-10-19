@@ -236,6 +236,7 @@ void CServerManager::Disconneted(void* ptr)
 
 	// Remove
 	Player_Manager::GetInstance()->Remove_From_Game((CClientSection*)ptr);
+	LoginManager::GetInstance()->Logout((CClientSection*)ptr);
 	ChatManager::GetInstance()->Remove((CClientSection*)ptr);
 	Lobby_Manager::GetInstance()->Remove((CClientSection*)ptr);
 	ClientManager::GetInstance()->RemoveClient((CClientSection*)ptr);

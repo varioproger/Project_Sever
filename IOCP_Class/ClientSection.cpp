@@ -10,11 +10,13 @@ CClientSection::CClientSection()
 	user = nullptr;
 	player = nullptr;
 	login_state = false;
+
 	mInitState = new CInitState();
 	mLoginState = new CLoginState();
 	mChatState = new ChatState();
 	mLobbyState = new Lobby_State();
 	mPlayerState = new Player_State();
+
 	mState = mInitState;
 }
 
@@ -23,11 +25,13 @@ CClientSection::CClientSection(SOCKET _sock) : CPacking(_sock)
 	user = nullptr;
 	login_state = false;
 	player = nullptr;
+
 	mInitState = new CInitState();
 	mLoginState = new CLoginState();
 	mChatState = new ChatState();
 	mLobbyState = new Lobby_State();
 	mPlayerState = new Player_State();
+
 	mState = mInitState;
 }
 
@@ -81,6 +85,7 @@ void CClientSection::Login(UserInfo* _user)
 	CLock lock;
 
 	user = _user;
+	user->login = true;
 	login_state = true;
 }
 
@@ -88,6 +93,7 @@ void CClientSection::Logout()
 {
 	CLock lock;
 
+	user->login = false;
 	user = nullptr;
 	login_state = false;
 }
